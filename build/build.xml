@@ -1,0 +1,37 @@
+<!DOCTYPE project>
+<project name="wspCmsCore" default="compile" basedir="../">
+  <description>mpiwg-mpdl-cms</description>
+  <!-- global properties -->
+  <property name="src" location="src"/>
+  <property name="lib" location="lib"/>
+  <property name="build" location="build/classes"/>
+  <property name="dist" location="dist"/>
+
+  <path id="classpath">
+    <fileset dir="${lib}" includes="**/*.jar"/>
+  </path>
+  
+  <target name="init">
+    <!-- Create time stamp -->
+    <tstamp/>
+    <mkdir dir="${build}"/>
+    <mkdir dir="${dist}"/>
+  </target>
+
+  <target name="compile" depends="init" description="compile">
+    <javac srcdir="${src}" destdir="${build}" classpathref="classpath" includeantruntime="false"/>
+    <copy todir="${build}">
+      <fileset dir="${src}">
+        <include name="**/*.xsl"/>
+        <include name="**/*.properties"/>
+      </fileset>
+    </copy>
+    <jar jarfile="${dist}/wspCmsCore.jar" basedir="${build}"/>
+    <copy file="${dist}/wspCmsCore.jar" todir="../wspCmsWebApp/WebContent/WEB-INF/lib"/>
+  </target>
+
+  <target name="clean" description="clean" >
+    <delete dir="${build}"/>
+    <delete file="${dist}/wspCmsCore.jar"/>
+  </target>
+</project>
