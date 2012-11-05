@@ -13,7 +13,7 @@
       <span style="background-color:#77DD77"><xsl:apply-templates/></span>
     </xsl:when>
     <xsl:otherwise>
-      <span style="background-color:#D3D3D3"><xsl:apply-templates/></span>
+      <xsl:apply-templates/>
     </xsl:otherwise>
   </xsl:choose>
 </xsl:template>

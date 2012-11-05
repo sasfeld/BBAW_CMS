@@ -5,10 +5,14 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Hashtable;
 
+import org.bbaw.wsp.cms.document.XQuery;
 import org.bbaw.wsp.cms.general.Constants;
 
 import de.mpg.mpiwg.berlin.mpdl.exception.ApplicationException;
+import de.mpg.mpiwg.berlin.mpdl.xml.xquery.Hit;
+import de.mpg.mpiwg.berlin.mpdl.xml.xquery.Hits;
 import de.mpg.mpiwg.berlin.mpdl.xml.xquery.XQueryEvaluator;
 
 public class CollectionReader {
@@ -90,6 +94,10 @@ public class CollectionReader {
           String[] collectionDataUrl = collectionDataUrlStr.split(" ");
           collection.setDataUrls(collectionDataUrl);
         }
+        String webBaseUrl = xQueryEvaluator.evaluateAsString(configFileUrl, "/wsp/collection/url/webBaseUrl/text()");
+        if(webBaseUrl != null) {
+          collection.setWebBaseUrl(webBaseUrl);
+        }
         String collectionDataUrlPrefix = xQueryEvaluator.evaluateAsString(configFileUrl, "/wsp/collection/url/dataUrlPrefix/text()");
         if(collectionDataUrlPrefix != null) {
           collection.setDataUrlPrefix(collectionDataUrlPrefix);
@@ -105,6 +113,21 @@ public class CollectionReader {
           }
         }
         collection.setFields(fieldsArrayList);
+        Hits xQueries = (Hits) xQueryEvaluator.evaluate(configFileUrl, "/wsp/collection/xqueries/xquery", 0, 9, "hits");
+        if(xQueries != null) {
+          Hashtable<String, XQuery> xqueriesHashtable = new Hashtable<String, XQuery>();
+          for (int i=0; i<xQueries.getSize(); i++) {
+            Hit xqueryHit = xQueries.getHits().get(i);
+            String xqueryStr = xqueryHit.getContent();
+            String xQueryName = xQueryEvaluator.evaluateAsStringValueJoined(xqueryStr, "xquery/name");
+            String xQueryCode = xQueryEvaluator.evaluateAsStringValueJoined(xqueryStr, "xquery/code");
+            if (xQueryName != null && xQueryCode != null) {
+              XQuery xQuery = new XQuery(xQueryName, xQueryCode);
+              xqueriesHashtable.put(xQueryName, xQuery);
+            }
+          }
+          collection.setxQueries(xqueriesHashtable);
+        }
         String excludesStr = xQueryEvaluator.evaluateAsStringValueJoined(configFileUrl, "/wsp/collection/url/exclude");
         if (excludesStr != null) {
           collection.setExcludesStr(excludesStr);

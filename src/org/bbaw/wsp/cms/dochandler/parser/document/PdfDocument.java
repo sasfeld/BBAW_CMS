@@ -14,8 +14,8 @@ import org.bbaw.wsp.cms.document.MetadataRecord;
  * 
  */
 public class PdfDocument extends GeneralDocument {
-  private static String MIME_TYPE = "application/pdf";
-  private static String SCHEME_NAME = "pdf";
+  public static String MIME_TYPE = "application/pdf";
+  public static String SCHEME_NAME = "pdf";
 
   private List<PdfPage> pages;
 

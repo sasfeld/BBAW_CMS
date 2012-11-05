@@ -25,7 +25,7 @@ public class ResourceReaderImpl implements IResourceReader {
    */
   public InputStream read(final String uri) throws ApplicationException {
     try {
-      if (uri.contains("http://")) {
+      if (uri.startsWith("http://") || uri.startsWith("file:/")) {
         URL url;
         url = new URL(uri);
         InputStream in = url.openStream();

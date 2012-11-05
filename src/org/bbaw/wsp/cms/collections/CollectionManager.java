@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -15,6 +16,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.bbaw.wsp.cms.dochandler.DocumentHandler;
 import org.bbaw.wsp.cms.dochandler.parser.text.parser.EdocIndexMetadataFetcherTool;
 import org.bbaw.wsp.cms.document.MetadataRecord;
+import org.bbaw.wsp.cms.document.XQuery;
 import org.bbaw.wsp.cms.scheduler.CmsDocOperation;
 
 import de.mpg.mpiwg.berlin.mpdl.exception.ApplicationException;
@@ -149,6 +151,7 @@ public class CollectionManager {
       List<String> documentUrls = collection.getDocumentUrls();
       String[] metadataUrls = collection.getMetadataUrls();
       String metadataUrlType = collection.getMetadataUrlType();  // single or many
+      Hashtable<String, XQuery> xQueries = collection.getxQueries();
       if (metadataUrls != null) {
         if (metadataUrlType != null && metadataUrlType.equals("single")) {
           mdRecords = new ArrayList<MetadataRecord>();
@@ -178,6 +181,7 @@ public class CollectionManager {
               String mainLanguage = collection.getMainLanguage();
               mdRecord.setLanguage(mainLanguage);
               mdRecord.setSchemaName(null);
+              mdRecord.setxQueries(xQueries);
               mdRecords.add(mdRecord);
             }
           }
@@ -202,6 +206,7 @@ public class CollectionManager {
           mdRecord.setDocId(docId);
           mdRecord.setUri(docUrl);
           mdRecord.setCollectionNames(collectionId);
+          mdRecord.setxQueries(xQueries);
           mdRecords.add(mdRecord);
         }
       }

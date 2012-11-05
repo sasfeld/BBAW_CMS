@@ -1,12 +1,16 @@
 package org.bbaw.wsp.cms.collections;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
+
+import org.bbaw.wsp.cms.document.XQuery;
 
 public class Collection {
   private String id;
   private String name;
   private String[] dataUrls;  // urls of data (could also be starting url)
+  private String webBaseUrl;  // web base url 
   private String dataUrlPrefix;  // prefix of url which is not relevant as id 
   private String[] metadataUrls;  // metadata urls for fetching records
   private String metadataUrlPrefix;  // prefix of metadataUrl which is not relevant as id
@@ -14,6 +18,7 @@ public class Collection {
   private String excludesStr; // excludes below dataUrl separated by a blank
   private String mainLanguage;
   private ArrayList<String> fields;
+  private Hashtable<String, XQuery> xQueries;
   private List<String> excludeField;
   private List<String> formats;
   private boolean updateNecessary;
@@ -136,6 +141,22 @@ public class Collection {
 
   public void setFields(ArrayList<String> fields) {
     this.fields = fields;
+  }
+
+  public Hashtable<String, XQuery> getxQueries() {
+    return xQueries;
+  }
+
+  public void setxQueries(Hashtable<String, XQuery> xQueries) {
+    this.xQueries = xQueries;
+  }
+
+  public String getWebBaseUrl() {
+    return webBaseUrl;
+  }
+
+  public void setWebBaseUrl(String webBaseUrl) {
+    this.webBaseUrl = webBaseUrl;
   }
 
   public boolean isUpdateNecessary() {

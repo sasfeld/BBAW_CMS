@@ -6,8 +6,10 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -57,6 +59,7 @@ import org.bbaw.wsp.cms.dochandler.DocumentHandler;
 import org.bbaw.wsp.cms.document.Hits;
 import org.bbaw.wsp.cms.document.MetadataRecord;
 import org.bbaw.wsp.cms.document.Token;
+import org.bbaw.wsp.cms.document.XQuery;
 import org.bbaw.wsp.cms.general.Constants;
 import org.bbaw.wsp.cms.scheduler.CmsDocOperation;
 import org.bbaw.wsp.cms.translator.MicrosoftTranslator;
@@ -277,6 +280,30 @@ public class IndexHandler {
       if (content != null) {
         Field contentField = new Field("content", content, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS);
         doc.add(contentField);
+      }
+      // save the webUrl field  
+      Hashtable<String, XQuery> xqueriesHashtable = mdRecord.getxQueries();
+      if (xqueriesHashtable != null) {
+        String webUri = null;
+        Enumeration<String> keys = xqueriesHashtable.keys();
+        if (keys != null && keys.hasMoreElements()) {
+          XQuery xQueryWebId = xqueriesHashtable.get("webId");
+          if (xQueryWebId != null) {
+            String webId = xQueryWebId.getResult();
+            String collectionName = mdRecord.getCollectionNames();
+            if (collectionName != null && webId != null) {
+              webId = webId.trim();
+              Collection collection = CollectionReader.getInstance().getCollection(collectionName);
+              String webBaseUrl = collection.getWebBaseUrl();
+              if (webBaseUrl != null)
+                webUri = webBaseUrl + "/" + webId;
+            }
+          }
+        }
+        if (webUri != null) {
+          Field webUriField = new Field("webUri", webUri, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS);
+          doc.add(webUriField);
+        }
       }
 
       documentsIndexWriter.addDocument(doc);
@@ -550,6 +577,10 @@ public class IndexHandler {
       Fieldable uriField = doc.getFieldable("uri");
       if (uriField != null)
         uri = uriField.stringValue();
+      String webUri = null;
+      Fieldable webUriField = doc.getFieldable("webUri");
+      if (webUriField != null)
+        webUri = webUriField.stringValue();
       String collectionNames = null;
       Fieldable collectionNamesField = doc.getFieldable("collectionNames");
       if (collectionNamesField != null)
@@ -605,6 +636,16 @@ public class IndexHandler {
         String pageCountStr = pageCountField.stringValue();
         pageCount = Integer.valueOf(pageCountStr);
       }
+      String personsStr = null;
+      Fieldable personsField = doc.getFieldable("persons");
+      if (personsField != null) {
+        personsStr = personsField.stringValue();
+      }
+      String placesStr = null;
+      Fieldable placesField = doc.getFieldable("places");
+      if (personsField != null) {
+        placesStr = placesField.stringValue();
+      }
       String schemaName = null;
       Fieldable schemaNameField = doc.getFieldable("schemaName");
       if (schemaNameField != null)
@@ -618,6 +659,7 @@ public class IndexHandler {
       mdRecord = new MetadataRecord();
       mdRecord.setDocId(docId);
       mdRecord.setUri(uri);
+      mdRecord.setWebUri(webUri);
       mdRecord.setIdentifier(identifier);
       mdRecord.setCollectionNames(collectionNames);
       mdRecord.setCreator(author);
@@ -628,6 +670,8 @@ public class IndexHandler {
       mdRecord.setRights(rights);
       mdRecord.setAccessRights(accessRights);
       mdRecord.setPageCount(pageCount);
+      mdRecord.setPersons(personsStr);
+      mdRecord.setPlaces(placesStr);
       mdRecord.setSchemaName(schemaName);
       mdRecord.setLastModified(lastModified);
     }
@@ -1101,6 +1145,7 @@ public class IndexHandler {
       documentsFieldAnalyzers.put("docId", new KeywordAnalyzer());
       documentsFieldAnalyzers.put("identifier", new KeywordAnalyzer()); 
       documentsFieldAnalyzers.put("uri", new KeywordAnalyzer());
+      documentsFieldAnalyzers.put("webUri", new KeywordAnalyzer());
       documentsFieldAnalyzers.put("collectionNames", new StandardAnalyzer(Version.LUCENE_35));
       documentsFieldAnalyzers.put("author", new StandardAnalyzer(Version.LUCENE_35));
       documentsFieldAnalyzers.put("title", new StandardAnalyzer(Version.LUCENE_35));
@@ -1221,6 +1266,7 @@ public class IndexHandler {
     fields.add("docId");
     fields.add("identifier");
     fields.add("uri");
+    fields.add("webUri");
     fields.add("collectionNames");
     fields.add("author");
     fields.add("title");

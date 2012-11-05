@@ -7,10 +7,6 @@ import java.net.URL;
 
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.params.HttpClientParams;
-import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.bbaw.wsp.cms.document.MetadataRecord;
 
 import de.mpg.mpiwg.berlin.mpdl.exception.ApplicationException;
@@ -30,9 +26,8 @@ public class PageTransformer {
   private Processor processor;
   private XsltCompiler xsltCompiler;
   private XsltTransformer pageTeiTransformer;
-  private XsltTransformer pageEchoTransformer;
-  private XsltTransformer pageArchimedesTransformer;
   private XsltTransformer pageXhtmlTransformer;
+  private XsltTransformer pageDiverseTransformer;
   private XsltTransformer pageXmlTransformer;
   
   public PageTransformer() throws ApplicationException {
@@ -47,18 +42,14 @@ public class PageTransformer {
       StreamSource xslStreamSource = new StreamSource(getFragmentXslUrl.openStream());
       XsltExecutable xsltExecutable = xsltCompiler.compile(xslStreamSource);
       pageTeiTransformer = xsltExecutable.load();
-      getFragmentXslUrl = PageTransformer.class.getResource("pageEcho.xsl");
-      xslStreamSource = new StreamSource(getFragmentXslUrl.openStream());
-      xsltExecutable = xsltCompiler.compile(xslStreamSource);
-      pageEchoTransformer = xsltExecutable.load();
-      getFragmentXslUrl = PageTransformer.class.getResource("pageArchimedes.xsl");
-      xslStreamSource = new StreamSource(getFragmentXslUrl.openStream());
-      xsltExecutable = xsltCompiler.compile(xslStreamSource);
-      pageArchimedesTransformer = xsltExecutable.load();
       getFragmentXslUrl = PageTransformer.class.getResource("pageXhtml.xsl");
       xslStreamSource = new StreamSource(getFragmentXslUrl.openStream());
       xsltExecutable = xsltCompiler.compile(xslStreamSource);
       pageXhtmlTransformer = xsltExecutable.load();
+      getFragmentXslUrl = PageTransformer.class.getResource("pageDiverse.xsl");
+      xslStreamSource = new StreamSource(getFragmentXslUrl.openStream());
+      xsltExecutable = xsltCompiler.compile(xslStreamSource);
+      pageDiverseTransformer = xsltExecutable.load();
       getFragmentXslUrl = PageTransformer.class.getResource("pageXml.xsl");
       xslStreamSource = new StreamSource(getFragmentXslUrl.openStream());
       xsltExecutable = xsltCompiler.compile(xslStreamSource);
@@ -78,16 +69,12 @@ public class PageTransformer {
       XsltTransformer transformer = null;
       if (schemaName != null && schemaName.equals("tei") && outputFormat.equals("html"))
         transformer = pageTeiTransformer;
-      else if (schemaName != null && schemaName.equals("echo") && outputFormat.equals("html"))
-        transformer = pageEchoTransformer;
-      else if (schemaName != null && schemaName.equals("archimedes") && outputFormat.equals("html"))
-        transformer = pageArchimedesTransformer;
       else if (schemaName != null && schemaName.equals("xhtml") && outputFormat.equals("html"))
         transformer = pageXhtmlTransformer;
       else if (outputFormat.equals("xmlDisplay"))
         transformer = pageXmlTransformer;
       else
-        transformer = pageTeiTransformer;
+        transformer = pageDiverseTransformer;
       StringReader inputStrReader = new StringReader(inputStr);
       StreamSource xmlDoc = new StreamSource(inputStrReader);
       Serializer serializer = new Serializer();
@@ -119,27 +106,4 @@ public class PageTransformer {
     }
     return pageFragment;
   }
-
-  private boolean checkUri(URL url, int timeoutMilliseconds) throws ApplicationException {
-    boolean isOk = true;
-    HttpClient httpClient = new HttpClient();
-    GetMethod method = null;
-    try {
-      String uriStr = url.toExternalForm();
-      httpClient.getParams().setParameter(HttpMethodParams.SO_TIMEOUT, new Integer(timeoutMilliseconds));
-      httpClient.getParams().setParameter(HttpClientParams.CONNECTION_MANAGER_TIMEOUT, new Long(timeoutMilliseconds));
-      method = new GetMethod(uriStr);
-      method.getParams().setParameter(HttpMethodParams.SO_TIMEOUT, new Integer(timeoutMilliseconds));
-      method.setFollowRedirects(true); 
-      httpClient.executeMethod(method); 
-    } catch (IOException e) {
-      isOk = false;  // if timeout exception is thrown
-    } finally {
-      if (method != null) {
-        method.releaseConnection();
-      }
-    }
-    return isOk;
-  }
-
 }

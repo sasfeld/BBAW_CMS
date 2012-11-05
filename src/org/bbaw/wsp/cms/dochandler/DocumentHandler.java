@@ -10,7 +10,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.logging.Logger;
 
@@ -24,6 +26,7 @@ import org.apache.commons.io.FileUtils;
 import org.bbaw.wsp.cms.dochandler.parser.document.IDocument;
 import org.bbaw.wsp.cms.dochandler.parser.text.parser.DocumentParser;
 import org.bbaw.wsp.cms.document.MetadataRecord;
+import org.bbaw.wsp.cms.document.XQuery;
 import org.bbaw.wsp.cms.general.Constants;
 import org.bbaw.wsp.cms.lucene.IndexHandler;
 import org.bbaw.wsp.cms.scheduler.CmsDocOperation;
@@ -36,6 +39,7 @@ import org.xml.sax.XMLReader;
 import com.sun.org.apache.xerces.internal.parsers.SAXParser;
 
 import de.mpg.mpiwg.berlin.mpdl.exception.ApplicationException;
+import de.mpg.mpiwg.berlin.mpdl.lt.general.Language;
 import de.mpg.mpiwg.berlin.mpdl.lt.text.tokenize.Token;
 import de.mpg.mpiwg.berlin.mpdl.lt.text.tokenize.XmlTokenizer;
 import de.mpg.mpiwg.berlin.mpdl.lt.text.tokenize.XmlTokenizerContentHandler;
@@ -115,8 +119,8 @@ public class DocumentHandler {
         File tocFile = new File(docDirName + "/toc.xml");
         String tocResult = tocTransformer.transform(docDestFileNameUpgrade);
         FileUtils.writeStringToFile(tocFile, tocResult, "utf-8");
-        String persons = getPersons(tocResult, xQueryEvaluator);  // TODO eliminate duplicates
-        String places = getPlaces(tocResult, xQueryEvaluator);  // TODO eliminate duplicates
+        String persons = getPersons(tocResult, xQueryEvaluator); 
+        String places = getPlaces(tocResult, xQueryEvaluator);
   
         // Get metadata info out of the xml document
         mdRecord.setPersons(persons);
@@ -124,6 +128,9 @@ public class DocumentHandler {
         docOperation.setStatus("extract metadata of: " + srcUrlStr + " to CMS");
         mdRecord = getMetadataRecord(docDestFileUpgrade, docType, mdRecord, xQueryEvaluator);
         String mdRecordLanguage = mdRecord.getLanguage();
+        String langId = Language.getInstance().getLanguageId(mdRecordLanguage); // test if language code is supported
+        if (langId == null)
+          mdRecordLanguage = null;
         if (mdRecordLanguage == null && mainLanguage != null)
           mdRecord.setLanguage(mainLanguage);
           
@@ -298,12 +305,32 @@ public class DocumentHandler {
         mdRecord = getMetadataRecordHtml(xQueryEvaluator, srcUrl, mdRecord);
       else
         mdRecord.setSchemaName(schemaName); // all other cases: set docType to schemaName
+      evaluateXQueries(xQueryEvaluator, srcUrl, mdRecord);
     } catch (MalformedURLException e) {
       throw new ApplicationException(e);
     }
     return mdRecord;
   }
 
+  private MetadataRecord evaluateXQueries(XQueryEvaluator xQueryEvaluator, URL srcUrl, MetadataRecord mdRecord) {
+    Hashtable<String, XQuery> xqueriesHashtable = mdRecord.getxQueries();
+    if (xqueriesHashtable != null) {
+      Enumeration<String> keys = xqueriesHashtable.keys();
+      while (keys != null && keys.hasMoreElements()) {
+        String key = keys.nextElement();
+        XQuery xQuery = xqueriesHashtable.get(key);
+        String xQueryCode = xQuery.getCode();
+        try {
+          String xQueryResult = xQueryEvaluator.evaluateAsString(srcUrl, xQueryCode);
+          xQuery.setResult(xQueryResult);
+        } catch (Exception e) {
+          // nothing
+        }
+      }
+    }
+    return mdRecord;
+  }
+  
   private MetadataRecord getMetadataRecordTei(XQueryEvaluator xQueryEvaluator, URL srcUrl, MetadataRecord mdRecord) throws ApplicationException {
     String metadataXmlStr = xQueryEvaluator.evaluateAsString(srcUrl, "/*:TEI/*:teiHeader");
     if (metadataXmlStr != null) {
@@ -319,8 +346,10 @@ public class DocumentHandler {
       String language = xQueryEvaluator.evaluateAsStringValueJoined(metadataXmlStr, "string(/*:teiHeader/*:profileDesc/*:langUsage/*:language[1]/@ident)");
       if (language != null && language.isEmpty())
         language = null;
-      if (language != null)
+      if (language != null) {
         language = StringUtils.deresolveXmlEntities(language);
+        language = Language.getInstance().getISO639Code(language);
+      }
       String place = xQueryEvaluator.evaluateAsStringValueJoined(metadataXmlStr, "/*:teiHeader/*:fileDesc/*:publicationStmt/*:pubPlace");
       if (place != null)
         place = StringUtils.deresolveXmlEntities(place);
@@ -382,8 +411,10 @@ public class DocumentHandler {
       String language = xQueryEvaluator.evaluateAsStringValueJoined(metadataXmlStr, "string(/meta[@name = 'DC.language']/@content)");
       if (language != null && language.isEmpty())
         language = null;
-      if (language != null && ! language.isEmpty())
+      if (language != null && ! language.isEmpty()) {
         language = StringUtils.deresolveXmlEntities(language);
+        language = Language.getInstance().getISO639Code(language);
+      }
       String publisher = xQueryEvaluator.evaluateAsStringValueJoined(metadataXmlStr, "string(/meta[@name = 'DC.publisher']/@content)");
       if (publisher != null)
         publisher = StringUtils.deresolveXmlEntities(publisher);
@@ -431,12 +462,12 @@ public class DocumentHandler {
   }
 
   private String getPersons(String tocString, XQueryEvaluator xQueryEvaluator) throws ApplicationException {
-    String persons = xQueryEvaluator.evaluateAsStringValueJoined(tocString, "/list/list[@type='persons']/item", "###");
+    String persons = xQueryEvaluator.evaluateAsStringValueJoined(tocString, "/list/list[@type='persons']/item[not(. = preceding::item)]", "###"); // [not(. = preceding::item)] removes duplicates
     return persons;
   }
   
   private String getPlaces(String tocString, XQueryEvaluator xQueryEvaluator) throws ApplicationException {
-    String places = xQueryEvaluator.evaluateAsStringValueJoined(tocString, "/list/list[@type='places']/item", "###");
+    String places = xQueryEvaluator.evaluateAsStringValueJoined(tocString, "/list/list[@type='places']/item[not(. = preceding::item)]", "###"); 
     return places;
   }
   

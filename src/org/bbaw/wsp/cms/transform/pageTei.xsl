@@ -23,10 +23,10 @@
 <xsl:variable name="dictionaryServiceName" select="'http://mpdl-service.mpiwg-berlin.mpg.de/mpiwg-mpdl-lt-web/lt/GetDictionaryEntries'"/>
 
 <xsl:template match="*:TEI">
-  <xsl:apply-templates mode="text"/>
+  <xsl:apply-templates select="*:text" mode="text"/>
 </xsl:template>
 
-<xsl:template match="*:expan|*:emph|*:q|*:quote|*:reg|*:num" mode="text">
+<xsl:template match="*:expan|*:emph|*:q|*:quote|*:reg" mode="text">
   <xsl:element name="span">
     <xsl:attribute name="class"><xsl:value-of select="name()"/></xsl:attribute>
     <xsl:copy-of select="@*"/>
@@ -77,7 +77,7 @@
     </xsl:for-each>  
   </xsl:if>
   <!--   Notes                      -->
-  <xsl:variable name="bottomNotes" select="//*:note[contains(@place, 'bottom') or empty(string(@place))]"/>
+  <xsl:variable name="bottomNotes" select="//*:note[contains(@place, 'foot') or empty(string(@place))]"/>
   <xsl:variable name="countBottomNotes" select="count($bottomNotes)"/>
   <xsl:if test="$countBottomNotes > 0">
     <span class="notes">
@@ -88,7 +88,7 @@
             <xsl:value-of select="$noteSign"/>
           </span>
           <span>
-            <xsl:attribute name="class"><xsl:value-of select="'noteBody bottom'"/></xsl:attribute>
+            <xsl:attribute name="class"><xsl:value-of select="'noteBody foot'"/></xsl:attribute>
             <xsl:apply-templates mode="text"/>
           </span>
         </span>
@@ -177,6 +177,21 @@
   </span>
 </xsl:template>
 
+<!-- num   -->
+<xsl:template match="*:num" mode="text">
+  <span>
+    <xsl:choose>
+      <xsl:when test="empty(@rend)">
+        <xsl:attribute name="class"><xsl:value-of select="name()"/></xsl:attribute>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:attribute name="class"><xsl:value-of select="concat(name(), ' ' , @rend)"/></xsl:attribute>
+      </xsl:otherwise>
+    </xsl:choose>
+    <xsl:apply-templates mode="text"/>
+  </span>
+</xsl:template>
+
 <!-- segmentation   -->
 <xsl:template match="*:seg" mode="text">
   <xsl:choose>
@@ -213,30 +228,41 @@
   <xsl:choose>
     <xsl:when test="not(empty(@type)) and @type = 'elem'">
       <div>
+        <xsl:if test="not(empty(@xml:id))"><xsl:attribute name="id"><xsl:value-of select="@xml:id"/></xsl:attribute></xsl:if>
         <xsl:attribute name="class"><xsl:value-of select="concat('highlight ', @type)"/></xsl:attribute>
         <xsl:apply-templates mode="text"/>
       </div>
     </xsl:when>
     <xsl:when test="not(empty(@type)) and @type != 'elem'">
       <span>
+        <xsl:if test="not(empty(@xml:id))"><xsl:attribute name="id"><xsl:value-of select="@xml:id"/></xsl:attribute></xsl:if>
         <xsl:attribute name="class"><xsl:value-of select="concat('highlight ', @type)"/></xsl:attribute>
         <xsl:apply-templates mode="text"/>
       </span>
-    </xsl:when>
-    <xsl:when test="@rend = 'initial'">
-      <span class="dc-unmodified"><xsl:apply-templates mode="text"/></span>
-    </xsl:when>
-    <xsl:when test="@rend = 'bold'">
-      <span class="bf"><xsl:apply-templates mode="text"/></span>
-    </xsl:when>
-    <xsl:otherwise>
-      <span>
-        <xsl:attribute name="class"><xsl:value-of select="@rend"/></xsl:attribute>
-        <xsl:apply-templates mode="text"/>
-      </span>
-    </xsl:otherwise>
+   </xsl:when>
+   <xsl:when test="@rend = 'initial'">
+     <span>
+       <xsl:if test="not(empty(@xml:id))"><xsl:attribute name="id"><xsl:value-of select="@xml:id"/></xsl:attribute></xsl:if>
+       <xsl:attribute name="class"><xsl:value-of select="'initial'"/></xsl:attribute>
+       <xsl:apply-templates mode="text"/>
+     </span>
+   </xsl:when>
+   <xsl:when test="@rend = 'bold'">
+     <span>
+       <xsl:if test="not(empty(@xml:id))"><xsl:attribute name="id"><xsl:value-of select="@xml:id"/></xsl:attribute></xsl:if>
+       <xsl:attribute name="class"><xsl:value-of select="'bf'"/></xsl:attribute>
+       <xsl:apply-templates mode="text"/>
+     </span>
+   </xsl:when>
+   <xsl:otherwise>
+     <span>
+       <xsl:if test="not(empty(@xml:id))"><xsl:attribute name="id"><xsl:value-of select="@xml:id"/></xsl:attribute></xsl:if>
+       <xsl:attribute name="class"><xsl:value-of select="@rend"/></xsl:attribute>
+       <xsl:apply-templates mode="text"/>
+     </span>
+   </xsl:otherwise>
   </xsl:choose>
-</xsl:template>
+</xsl:template> 
 
 <!-- name (of type: place, person, ...)   -->
 <xsl:template match="*:name" mode="text">
@@ -492,10 +518,6 @@
   <span class="s">
     <xsl:apply-templates mode="text"/>
   </span>
-</xsl:template>
-
-<xsl:template match="text()" mode="text">
-  <xsl:value-of select="."/>
 </xsl:template>
 
 </xsl:stylesheet>

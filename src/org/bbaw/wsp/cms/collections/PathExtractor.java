@@ -80,7 +80,7 @@ public class PathExtractor {
                 if (! isNameExcluded(nameAttributeValue.toLowerCase())) {
                   if (nameAttributeValue.startsWith("/")) {
                     client.getConnectionManager().closeExpiredConnections();
-                    extractDocLocations(startUrl + nameAttributeValue);
+                      extractDocLocations(startUrl + nameAttributeValue);
                   } else {
                     client.getConnectionManager().closeExpiredConnections();
                     if (! startUrl.endsWith("/")) {

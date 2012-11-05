@@ -36,5 +36,10 @@
 	<classpathentry kind="lib" path="lib/fontbox-1.7.1.jar"/>
 	<classpathentry kind="lib" path="lib/tagsoup-1.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/bcprov-jdk15on-147.jar"/>
+	<classpathentry kind="lib" path="lib/juniversalchardet-1.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/jena-arq-2.9.3.jar"/>
+	<classpathentry kind="lib" path="lib/jena-core-2.7.3.jar"/>
+	<classpathentry kind="lib" path="lib/jena-iri-0.9.3.jar"/>
+	<classpathentry kind="lib" path="lib/jena-tdb-0.9.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
