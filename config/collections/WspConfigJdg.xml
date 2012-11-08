@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsp>
+  <collection>
+    <id>jdg</id>
+    <name>Jahresberichte fuer deutsche Geschichte</name>
+    <!-- if dataUrl is not a directory but a file, it should end with a forward slash -->
+    <url>
+      <dataUrl>http://telota.bbaw.de:8088/exist/servlet/db/JDG/1930/</dataUrl>
+      <exclude>pages</exclude>
+      <exclude>scripts</exclude>
+      <exclude>svg</exclude>
+      <exclude>users</exclude>
+      <exclude>backup</exclude>
+    </url>
+    <formats>
+      <format>xml</format>
+      <format>pdf</format>
+      <format></format>
+    </formats>
+    <fields>
+      <field></field>
+      <field></field>
+      <field></field>
+      <exclude></exclude>
+    </fields>
+    <update>false</update>
+  </collection>
+</wsp>

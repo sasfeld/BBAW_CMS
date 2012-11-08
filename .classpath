@@ -37,9 +37,15 @@
 	<classpathentry kind="lib" path="lib/tagsoup-1.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/bcprov-jdk15on-147.jar"/>
 	<classpathentry kind="lib" path="lib/juniversalchardet-1.0.3.jar"/>
-	<classpathentry kind="lib" path="lib/jena-arq-2.9.3.jar"/>
-	<classpathentry kind="lib" path="lib/jena-core-2.7.3.jar"/>
-	<classpathentry kind="lib" path="lib/jena-iri-0.9.3.jar"/>
-	<classpathentry kind="lib" path="lib/jena-tdb-0.9.3.jar"/>
+	<classpathentry kind="lib" path="lib/apache/jena-arq-2.9.3.jar"/>
+	<classpathentry kind="lib" path="lib/apache/jena-core-2.7.3.jar"/>
+	<classpathentry kind="lib" path="lib/apache/jena-iri-0.9.3.jar"/>
+	<classpathentry kind="lib" path="lib/apache/jena-tdb-0.9.3.jar"/>
+	<classpathentry kind="lib" path="lib/apache/log4j-1.2.16.jar"/>
+	<classpathentry kind="lib" path="lib/apache/slf4j-api-1.6.4.jar"/>
+	<classpathentry kind="lib" path="lib/apache/slf4j-log4j12-1.6.4.jar"/>
+	<classpathentry kind="lib" path="lib/apache/xercesImpl-2.10.0.jar"/>
+	<classpathentry kind="lib" path="lib/apache/xml-apis-1.4.01.jar"/>
+	<classpathentry kind="lib" path="lib/apache/fuseki-server.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

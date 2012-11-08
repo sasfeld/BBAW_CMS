@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:dc="http://purl.org/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:edm="http://www.europeana.eu/schemas/edm/" xmlns:xi="http://www.w3.org/2001/XInclude">
+			<rdf:Description xml:base="%%resource_identifier%%" rdf:about="%%resource_identifier%%">				
+				<ore:describes rdf:resource="%%aggregation_uri%%" />
+				<rdf:type rdf:resource="http://www.openarchives.org/ore/terms/ResourceMap"/>
+				<dc:creator rdf:parseType="Resource">
+					<foaf:name>%%creator_name%%</foaf:name>
+					<foaf:page rdf:resource="%%creator_url%%"/>
+				</dc:creator>				
+				<dcterms:created rdf:datatype="http://www.w3.org/2001/XMLSchema#date">%%actual_date%%</dcterms:created>
+				<dcterms:modified/>
+				<dc:rights/>
+				<dcterms:rights rdf:resource="http://creativecommons.org/licenses/by-nc/2.5/"/>
+			</rdf:Description>
+			<rdf:Description rdf:about="%%aggregation_uri%%">
+				<ore:describedBy rdf:resource="%%resource_identifier%%"/>
+				<rdf:type rdf:resource="http://www.openarchives.org/ore/terms/Aggregation"/>			
+				<dc:title>%%dc_title%%</dc:title>	
+				<dc:creator rdf:parseType="Resource">
+					<foaf:givenName>%%given_name%%</foaf:givenName>
+					<foaf:familyName>%%family_name%%</foaf:familyName>					
+				</dc:creator>			
+				<!-- Aggregated Resources -->
+				<!-- hier kommen die aggregations hin -->
+				<!-- Administrative Elemente -->			
+				<dc:title>%%dc_title%%</dc:title>
+				<dc:identifier rdf:resource="%%resource_identifier%%"/>
+				<dc:identifier rdf:resource="%%resource_urn_identifier%%"/>
+				<dc:source>%%source%%</dc:source>
+				<dcterms:created>
+					<dcterms:W3CDTF>
+						<rdf:value>%%date_created%%</rdf:value>
+					</dcterms:W3CDTF>
+				</dcterms:created>
+				<dcterms:issued>
+					<dcterms:W3CDTF>						
+						<rdf:value>%%date_issued%%</rdf:value>
+					</dcterms:W3CDTF>
+				</dcterms:issued>			
+				<dc:publisher rdf:resource="%%publisher%%"/>
+				<dc:language>
+					<dcterms:ISO639-3>						
+						<rdf:value>%%language%%</rdf:value>
+					</dcterms:ISO639-3>
+				</dc:language>
+				<!-- dcmiType -->
+				<dc:type>%%document_type%%</dc:type>
+				<edm:hasType/>
+				<dc:format>					
+					<dcterms:IMT rdf:value="%%mime_type%%"/>
+					<!--<dcterms:DCMIType rdf:value="InteractiveResource"/> -->
+				</dc:format>
+				<dc:modified>
+					<dcterms:W3CDTF>
+						<rdf:value><!-- nicht ausgezeichnet--></rdf:value>
+					</dcterms:W3CDTF>
+				</dc:modified>
+				<dc:extent><!-- nicht ausgezeichnet --></dc:extent>
+				<dc:abstract>%%dc_description%%</dc:abstract>				
+					<!-- hier entweder kontrolliertes Vocab oder freie Schlagwörter -->
+					<!-- vorerst SWD -->
+				%%subjects%%					
+				<dcterms:DDC rdf:value="%%ddc%%" />					
+			</rdf:Description>
+			<rdf:Description rdf:about="">
+				<!-- hier kommen die allgemeinen Vorhabensdaten hin -->
+				<!-- wo bekommt man diese her? -> Vorhabens-Daten-Parser?! -->				
+			</rdf:Description>
+		</rdf:RDF>

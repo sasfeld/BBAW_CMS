@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Wissenspeicher Konfigurationsdatei Template
+
+Jeder Sammlung von Ressourcen ist eine Konfigurationsdatei zugeordnet, in dem 
+sammlungszugehörige Informationen enthalten sind. Um ein Projekt in den Wissenspeicher einzupflegen muss 
+eine solche Konfigurationsdatei angelegt werden.
+
+In der Konfigurationsdatei wird in das update Tag eingetragen, 
+ob eine Veränderung der Ressource(n) stattgefunden hat (durch 'true' oder 'false') . In regelmäßigen Abständen 
+wird die Konfigurationsdatei überprüft und der Index bei dem Wert <update>true</update> aktualisiert.
+
+In <dataUrl> muss eine Url angegeben werden, die auf zu indizierende Ressourcen verweist.  
+
+Die Konfigurationsdatei muss unter folgendendem Namen gespeichert werden: WspConfigProjektname.xml
+
+Beispiel:
+<wsp>
+  <collection>
+    <id>schleiermacher</id>
+    <name>Schleiermacher: Kritische Gesamtausgabe</name>
+    URL des Vorhabens if the collectionDataUrl is not a directory but a file, it should end with a forward slash
+    <url>
+      <dataUrl>http://telotadev.bbaw.de:8085/exist/rest/db/schleiermacher/</dataUrl>
+      <exclude>pages</exclude>
+      <exclude>scripts</exclude>
+      <exclude>svg</exclude>
+      <exclude>users</exclude>
+      <exclude>backup</exclude>
+    </url>
+    <languages>deu</languages>
+    <mainLanguage>deu</mainLanguage>
+    Spezifiziert die Formate in denen die Ressourcen des Vorhabens angelegt sind
+    <formats>
+      <format>xml</format>
+      <format>pdf</format>
+      <format></format>
+      <exclude></exclude>
+    </formats>
+    <fields>
+      <field>Source</field>
+      <field>Content</field>
+      <field>persname</field>
+      <exclude></exclude>
+    </fields>
+    <operation>
+      soll geupdated werden?
+      <update>true</update>
+      soll nur gelöscht werden (update beinhaltet das Löschen der alten zu updatenden Dateien)
+      <delete></delete>
+    </operation>
+  </collection>
+</wsp>
+
+-->

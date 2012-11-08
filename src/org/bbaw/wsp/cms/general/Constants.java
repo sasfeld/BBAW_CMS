@@ -1,12 +1,14 @@
 package org.bbaw.wsp.cms.general;
 
-import java.net.URL;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Properties;
-
-import de.mpg.mpiwg.berlin.mpdl.util.Util;
 
 public class Constants {
   private static Constants instance;
+  private String applicationDirectory;
+  private String configDirectory;
   private Properties properties;
 
   public static Constants getInstance() {
@@ -17,11 +19,36 @@ public class Constants {
     return instance;
   }
   
+  public static Constants getInstance(String applicationDirectory) {
+    if (instance == null) {
+      instance = new Constants();
+      instance.applicationDirectory = applicationDirectory;
+      instance.init();
+    }
+    return instance;
+  }
+  
   private void init() {
-    URL url = Constants.class.getClassLoader().getResource("constants.properties"); 
-    if (url != null) {
-      String propertiesFileName = url.toString().substring(5);
-      properties = (new Util()).getProperties(propertiesFileName);
+    File configDir = new File("./config");
+    if (applicationDirectory != null)
+      configDir = new File(applicationDirectory + "/config");
+    configDirectory = configDir.getAbsolutePath();
+    if (configDir.exists()) {
+      File coreConstantsPropFile = new File(configDirectory + "/core/constants.properties");
+      if (coreConstantsPropFile.exists()) {
+        try {
+          FileInputStream in = new FileInputStream(coreConstantsPropFile);
+          properties = new Properties();
+          properties.load(in);
+          System.out.println("CMS core property file: " + coreConstantsPropFile.getAbsolutePath() + " loaded");
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      } else {
+        System.out.println("CMS core property file: " + coreConstantsPropFile.getAbsolutePath() + " not found");
+      }
+    } else {
+      System.out.println("Application configuration directory: " + configDirectory + " not found");
     }
   }
   
@@ -46,10 +73,7 @@ public class Constants {
       return "no properties file";
   }
 
-  public String getConfDir() {
-    if (properties != null)
-      return properties.getProperty("confDir");
-    else 
-      return "no properties file";
+  public String getCollectionConfDir() {
+    return configDirectory + "/collections";
   }
 }

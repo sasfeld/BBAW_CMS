@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<wsp>
+  <collection>
+    <id>registres</id>
+    <name>Registres de l'Academie</name>
+    <!-- if dataUrl is not a directory but a file, it should end with a forward slash-->
+    <url>
+      <dataUrl>http://telota.bbaw.de:9979/exist/rest/db/registres/</dataUrl>
+      <exclude>pages</exclude>
+      <exclude>styles</exclude>
+      <exclude>scripts</exclude>
+      <exclude>svg</exclude>
+      <exclude>users</exclude>
+      <exclude>backup</exclude>
+      <exclude>protokolle/Sitzungsprotokolle.rng</exclude>
+      <exclude>protokolle/Sitzungsprotokolle_alt.rng</exclude>
+      <exclude>verzeichnisse/personenkorrektur.xml</exclude>
+      <exclude>verzeichnisse/Personenverzeichnis2.xml</exclude>
+    </url>
+    <languages>deu, fra</languages>
+    <mainLanguage>fra</mainLanguage>
+    <formats>
+      <format>xml</format>
+    </formats>
+    <fields>
+      <field>persName</field>
+      <field>placeName</field>
+      <field>p</field>
+      <field>s</field>
+      <field>head</field>
+      <exclude/>
+    </fields>
+    <update>false</update>
+  </collection>
+</wsp>

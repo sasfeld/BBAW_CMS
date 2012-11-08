@@ -51,7 +51,7 @@ public class CollectionReader {
     try {
       // holt alle Konfigurationsdateien aus dem Konfigurationsordner
       PathExtractor pathExtractor = new PathExtractor();
-      String confDir = Constants.getInstance().getConfDir();
+      String confDir = Constants.getInstance().getCollectionConfDir();
       List<String> configsFileList = pathExtractor.extractPathLocally(confDir);
       for (String configFileName : configsFileList) {
         File configFile = new File(configFileName);

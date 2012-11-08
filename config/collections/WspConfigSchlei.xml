@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsp>
+  <collection>
+    <id>schlei</id>
+    <name>Schleiermacher: Kritische Gesamtausgabe</name>
+    <!-- if dataUrl is not a directory but a file, it should end with a forward slash-->
+    <url>
+      <dataUrl>http://telotadev.bbaw.de:8085/exist/rest/db/schleiermacher/</dataUrl>
+        <exclude>pages</exclude>
+        <exclude>scripts</exclude>
+        <exclude>svg</exclude>
+        <exclude>users</exclude>
+        <exclude>backup</exclude>
+    </url>
+    <languages>deu</languages>
+    <mainLanguage>deu</mainLanguage>
+    <formats>
+      <format>xml</format>
+      <format></format>
+      <format></format>
+    </formats>
+    <fields>
+      <field>p</field>
+      <field>s</field>
+      <field>head</field>
+      <field>persName</field>
+      <field>placeName</field>
+    </fields>
+    <exclude></exclude>
+    <update>false</update>
+  </collection>
+</wsp>

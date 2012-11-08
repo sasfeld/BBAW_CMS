@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<wsp>
+  <collection>
+    <id>MEGA</id>
+    <name>Marx-Engels-Gesamtausgabe</name>
+    <url>
+      <!-- Abteilung 1   -->
+
+      <!-- Abteilung 2   -->
+      <dataUrl>http://telota.bbaw.de:8091/exist/rest/db/mega/docs/MEGA_A2_B001-01_ETX.xml</dataUrl>
+      <dataUrl>http://telota.bbaw.de:8091/exist/rest/db/mega/docs/MEGA_A2_B001-02_ETX.xml</dataUrl>
+      <dataUrl>http://telota.bbaw.de:8091/exist/rest/db/mega/docs/MEGA_A2_B004-01_ETX.xml</dataUrl>
+      <dataUrl>http://telota.bbaw.de:8091/exist/rest/db/mega/docs/MEGA_A2_B005-00_ETX.xml</dataUrl>
+      <dataUrl>http://telota.bbaw.de:8091/exist/rest/db/mega/docs/MEGA_A2_B011-00_ETX.xml</dataUrl>
+      <dataUrl>http://telota.bbaw.de:8091/exist/rest/db/mega/docs/MEGA_A2_B012-00_ETX.xml</dataUrl>
+      <dataUrl>http://telota.bbaw.de:8091/exist/rest/db/mega/docs/MEGA_A2_B013-00_ETX.xml</dataUrl>
+
+      <!-- Abteilung 3   -->
+
+      <!-- Abteilung 4   -->
+
+      <webBaseUrl>http://telota.bbaw.de/mega</webBaseUrl>
+    </url>
+    <languages>deu</languages>
+    <mainLanguage>deu</mainLanguage>
+    <formats>
+      <format>xml</format>
+    </formats>
+    <fields>
+      <field>p</field>
+      <field>s</field>
+      <field>head</field>
+    </fields>
+    <update>false</update>
+  </collection>
+</wsp>

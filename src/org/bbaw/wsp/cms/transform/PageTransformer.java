@@ -65,6 +65,8 @@ public class PageTransformer {
     String pageFragment = null;
     String docId = mdRecord.getDocId();
     String schemaName = mdRecord.getSchemaName();
+    if (schemaName != null)
+      schemaName = schemaName.toLowerCase();
     try {
       XsltTransformer transformer = null;
       if (schemaName != null && schemaName.equals("tei") && outputFormat.equals("html"))

@@ -48,8 +48,12 @@ public class XmlValidator {
       Source source = new SAXSource(xmlReader, new InputSource(resourceReader.read(uri)));
       @SuppressWarnings("unused")
       XdmNode contextItem = builder.build(source );      
-    } catch (SAXException | SaxonApiException e) {
-      // TODO Auto-generated catch block
+    } catch (SAXException e) {
+      if(debug) {
+        e.printStackTrace();
+      }     
+      return false;
+    } catch (SaxonApiException e) {
       if(debug) {
         e.printStackTrace();
       }     

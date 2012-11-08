@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<wsp>
+  <collection>
+    <id>mes</id>
+    <name>Magazin fur Erfahrungsseelenkunde</name>
+    <!-- if dataUrl is not a directory but a file, it should end with a forward slash-->
+    <url>
+      <dataUrl>http://telota.bbaw.de:8085/exist/rest/db/mes/</dataUrl>
+      <exclude>pages</exclude>
+      <exclude>scripts</exclude>
+      <exclude>svg</exclude>
+      <exclude>users</exclude>
+      <exclude>backup</exclude>
+    </url>
+    <languages>deu, ell</languages>
+    <mainLanguage>deu</mainLanguage>
+    <formats>
+      <format>xml</format>
+    </formats>
+    <fields>
+      <field>persName</field>
+      <field>placeName</field>
+      <field>p</field>
+      <field>s</field>
+      <field>head</field>
+      <exclude/>
+    </fields>
+    <update>false</update>
+  </collection>
+</wsp>

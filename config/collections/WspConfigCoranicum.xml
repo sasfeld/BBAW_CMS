@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<wsp>
+  <collection>
+    <id>coranicum</id>
+    <name>Corpus Coranicum</name>
+    <!-- if dataUrl is not a file but a directory, it should end with a forward slash-->
+    <url>
+      <dataUrl>http://telotadev.bbaw.de:8085/exist/rest/db/Koran/</dataUrl>
+      <!-- this user is only needed for the parent directory: http://telotadev.bbaw.de:8085/exist/rest/db/   -->
+      <user>
+        <name>koran</name>
+        <pw>koran4ll</pw>
+      </user> 
+      <webBaseUrl>http://corpuscoranicum.de/kommentar/index/sure</webBaseUrl>
+      <exclude>ms-data</exclude>
+      <exclude>test.xql</exclude>
+      <exclude>Kommentar/bibelbuecher.txt</exclude>
+      <exclude>Kommentar/Overlay.xsd</exclude>
+      <exclude>Kommentar/surenlaenge.txt</exclude>
+      <exclude>Kommentar/xml1.xsd</exclude>
+      <exclude>Kommentar/xml2.xsd</exclude>
+      <exclude>Kommentar/Kommentar.xsd</exclude>
+      <exclude>Textstruktur/Textstruktur.xsd</exclude>
+    </url>
+    <languages>deu, ara</languages>
+    <mainLanguage>deu</mainLanguage>
+    <formats>
+      <format>xml</format>
+    </formats>
+    <fields>
+      <field>p</field>
+      <field>Vers</field>
+    </fields>
+    <xqueries>
+      <xquery>
+        <name>webId</name>
+        <code>/*[1]/*[1]/string(@id)</code>
+      </xquery>
+    </xqueries>
+    <exclude/>
+    <update>false</update>
+  </collection>
+</wsp>

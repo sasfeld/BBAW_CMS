@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<wsp>
+  <collection>
+    <id>test</id>
+    <name>test</name>
+    <url>
+      <!-- if dataUrl is not a directory but a file, it should end with a forward slash -->
+      <dataUrl>http://wspdev/test/Test_1789.xml</dataUrl>
+    </url>
+    <languages>eng</languages>
+    <mainLanguage>eng</mainLanguage>
+    <formats>
+      <format>xml</format>
+    </formats>
+    <fields>
+      <field>p</field>
+      <field>s</field>
+      <field>head</field>
+      <exclude/>
+    </fields>
+    <update>false</update>
+  </collection>
+</wsp>

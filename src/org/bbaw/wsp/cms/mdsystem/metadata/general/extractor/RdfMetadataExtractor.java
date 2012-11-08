@@ -11,6 +11,8 @@ import de.mpg.mpiwg.berlin.mpdl.exception.ApplicationException;
  * @author Sascha Feldmann (wsp-shk1)
  * @date 25.10.2012
  * 
+ * Last change: 08.11.2012
+ * - added getXmlBaseValue()-method to extract the first matching xml base attribut (which contains the real URL)
  */
 public class RdfMetadataExtractor extends MetadataExtractor {
 
@@ -38,6 +40,16 @@ public class RdfMetadataExtractor extends MetadataExtractor {
   public String getRdfAboutValue() {
     String erg = (String) buildXPath("//rdf:Description[1]/@rdf:about", false); // First
                                                                              // node
+    return erg;
+  }
+  
+  /**
+   * Build path to the xml:base attribute. The first matching attribute will be returned.
+   * @return {@link String} the xml:base attribute's value (the uri of the described
+   *         resource)
+   */
+  public String getXmlBaseValue() {
+    String erg = (String) buildXPath("//*/@xml:base", false); 
     return erg;
   }
 

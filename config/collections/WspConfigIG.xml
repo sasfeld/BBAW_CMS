@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<wsp>
+  <collection>
+    <id>IG</id>
+    <name>Inscriptiones Graecae</name>
+    <!-- if dataUrl is not a file but a directory, it should end with a forward slash-->
+    <url>
+      <dataUrl>http://telota.bbaw.de/exist/rest/db/ig/texts/</dataUrl>
+      <webBaseUrl>http://telota.bbaw.de/ig</webBaseUrl>
+      <exclude>pages</exclude>
+      <exclude>scripts</exclude>
+      <exclude>svg</exclude>
+      <exclude>users</exclude>
+      <exclude>backup</exclude>
+    </url>
+    <languages>deu, grc</languages>
+    <mainLanguage>grc</mainLanguage>
+    <formats>
+      <format>xml</format>
+    </formats>
+    <fields>
+      <field>place</field>
+      <field>location</field>
+      <field>p</field>
+      <field>s</field>
+      <field>head</field>
+    </fields>
+    <xqueries>
+      <xquery>
+        <name>webId</name>
+        <code>//*:idno[@type="signature"]/text()</code>
+      </xquery>
+    </xqueries>
+    <exclude/>
+    <update>false</update>
+  </collection>
+</wsp>

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<wsp>
+  <collection>
+    <id>etymwb</id>
+    <name>Etymologisches Woerterbuch</name>
+    <url>
+      <dataUrl>http://telotadev.bbaw.de:8085/exist/rest/db/etymwb/</dataUrl>
+        <exclude>pages</exclude>
+        <exclude>scripts</exclude>
+        <exclude>svg</exclude>
+        <exclude>users</exclude>
+        <exclude>backup</exclude>
+    </url>
+    <formats>
+      <format>xml</format>
+      <format/>
+      <format/>
+    </formats>
+    <fields>
+      <field/>
+      <field/>
+      <field/>
+    </fields>
+    <exclude></exclude>
+    <update>false</update>
+  </collection>
+</wsp>

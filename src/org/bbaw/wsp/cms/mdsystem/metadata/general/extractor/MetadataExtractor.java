@@ -93,7 +93,10 @@ public abstract class MetadataExtractor {
       ValueRepresentation rep = value.getUnderlyingValue();
       // Replace attribute chars
       return MetadataParserHelper.removeAttributeChars(rep.getStringValue());   
-    } catch (SaxonApiException | XPathException e) {
+    } catch (SaxonApiException e) {
+      e.printStackTrace();
+      return null;
+    } catch (XPathException e) {
       e.printStackTrace();
       return null;
     }

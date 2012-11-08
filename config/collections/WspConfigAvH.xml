@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<wsp>
+  <collection>
+    <id>AvH</id>
+    <name>Alexander von Humboldt Christian Gottfried Ehrenberg Briefwechsel</name>
+    <!-- if dataUrl is not a directory but a file, it should end with a forward slash-->
+    <url>
+      <dataUrl>http://telota.bbaw.de:8085/exist/rest/db/AvHBriefedition/</dataUrl>
+      <exclude>pages</exclude>
+      <exclude>scripts</exclude>
+      <exclude>svg</exclude>
+      <exclude>users</exclude>
+      <exclude>backup</exclude>
+    </url>
+    <languages>deu</languages>
+    <mainLanguage>deu</mainLanguage>
+    <formats>
+      <format>xml</format>
+    </formats>
+    <fields>
+      <field>persName</field>
+      <field>placeName</field>
+      <field>zoolName</field>
+      <field>p</field>
+      <field>s</field>
+      <field>head</field>
+      <exclude/>
+    </fields>
+    <update>false</update>
+  </collection>
+</wsp>

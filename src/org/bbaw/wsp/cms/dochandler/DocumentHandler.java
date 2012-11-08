@@ -10,7 +10,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -587,6 +586,8 @@ public class DocumentHandler {
     XmlTokenizer xmlTokenizer = new XmlTokenizer(strReader);
     xmlTokenizer.setLanguage(language);
     String[] outputOptionsWithLemmas = {"withLemmas"}; // so all tokens are fetched with lemmas (costs performance)
+    String[] nwbElements = {"lb", "br", "cb"};  // non word breaking elements // TODO: "hi" cause bug
+    xmlTokenizer.setNWBElements(nwbElements);
     xmlTokenizer.setOutputOptions(outputOptionsWithLemmas); 
     xmlTokenizer.tokenize();  
     String retStr = xmlTokenizer.getXmlResult();

@@ -134,7 +134,9 @@ public abstract class ToRdfTransformer {
       transformer.setSource(inputSource);
       transformer.setDestination(serializer);
       transformer.transform();
-    } catch (SaxonApiException | SAXException e) {
+    } catch (SaxonApiException e) {
+      throw new ApplicationException("Problem while transforming -- " + e.getMessage());
+    } catch (SAXException e) {
       throw new ApplicationException("Problem while transforming -- " + e.getMessage());
     }    
   }
