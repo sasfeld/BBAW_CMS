@@ -3,6 +3,7 @@ package org.bbaw.wsp.cms.mdsystem.metadata.rdfmanager.fuseki;
 import org.apache.jena.fuseki.DatasetAccessor;
 import org.apache.jena.fuseki.DatasetAccessorFactory;
 
+import com.hp.hpl.jena.assembler.Mode;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
@@ -11,6 +12,7 @@ import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.update.UpdateExecutionFactory;
 import com.hp.hpl.jena.update.UpdateFactory;
+import com.hp.hpl.jena.update.UpdateProcessor;
 import com.hp.hpl.jena.update.UpdateRequest;
 
 /**
@@ -19,11 +21,16 @@ import com.hp.hpl.jena.update.UpdateRequest;
  * @date 08.11.2012
  *
  */
-public class FusekiServerHandler {
+public class FusekiHandler {
   /**
    * The select-mode for a SparQl query.
    */
   public static final String MODE_SELECT = "SELECT";
+  private static final String DEFAULT = "";
+  /**
+   * This is the standard query, no named graph is specified within the incoming query.
+   */
+  private static final String NONE_GRAPH_SPECIFIED = "";
   /**
    * The fuseki endpoint to do a SparQl query. Will be concatenated to the dataset URL.
    */
@@ -40,11 +47,11 @@ public class FusekiServerHandler {
    * The name of the default model (if not specifying a name for the graph).
    */
   public static String DEFAULT_NAMED_MODEL = "default";
-  private static FusekiServerHandler instance;
+  private static FusekiHandler instance;
   
-  public static FusekiServerHandler getInstance() {
+  public static FusekiHandler getInstance() {
     if(instance == null) {
-      return new FusekiServerHandler();
+      return new FusekiHandler();
     }
     return instance;
   }
@@ -55,8 +62,8 @@ public class FusekiServerHandler {
    * @return a {@link ResultSet} or null, e.g. if the mode doesn't return anything
    */
   public ResultSet executeSelectQuery(final String datasetUrl, final String queryCommand) {
-     final String pathToQueryEndpoint = datasetUrl+ENDPOINT_QUERY;
-     return queryServer(pathToQueryEndpoint, queryCommand, MODE_SELECT);        
+    // perform a query on an unspecified (default) graph
+    return executeSelectQuery(datasetUrl, queryCommand, NONE_GRAPH_SPECIFIED);   
   }
   
   /**
@@ -70,18 +77,16 @@ public class FusekiServerHandler {
      final String pathToQueryEndpoint = datasetUrl+ENDPOINT_QUERY;
      return queryServerWithDefaultGraph(pathToQueryEndpoint, queryCommand, MODE_SELECT, defaultGraphUri);        
   }
-  
-  private ResultSet queryServer(String pathToQueryEndpoint, String queryCommand, String resultFormat) {
-    Query q = QueryFactory.create(queryCommand);
-    QueryExecution queryEx = QueryExecutionFactory.sparqlService(pathToQueryEndpoint, q);
-    if(resultFormat.equals(MODE_SELECT)) {
-      ResultSet results = queryEx.execSelect(); // SELECT returns a ResultSet
-      return results;    
-    } 
-    return null;    
-  }
-  
-  private ResultSet queryServerWithDefaultGraph(String pathToQueryEndpoint, String queryCommand, String resultFormat, String defaultGraph) {
+
+  /**
+   * Perform the select query.
+   * @param pathToQueryEndpoint
+   * @param queryCommand
+   * @param resultFormat
+   * @param defaultGraph
+   * @return a {@link ResultSet} containing the specified response.
+   */
+  private ResultSet queryServerWithDefaultGraph(final String pathToQueryEndpoint, final String queryCommand, final String resultFormat, final String defaultGraph) {
     Query q = QueryFactory.create(queryCommand);
     QueryExecution queryEx = QueryExecutionFactory.sparqlService(pathToQueryEndpoint, q, defaultGraph);
     if(resultFormat.equals(MODE_SELECT)) {
@@ -93,7 +98,7 @@ public class FusekiServerHandler {
 
   /**
    * Put a model to a remote dataset. Consider, that an existing dataset will be replaced if you don't specify a modelName (for a named model).
-   * If you don't prefer a named model, use {@link FusekiServerHandler}.DEFAULT_NAMED_MODEL.
+   * If you don't prefer a named model, use {@link FusekiHandler}.DEFAULT_NAMED_MODEL.
    * @param url - the URL to the dataset on which the model will be putted.
    * @param model - the Jena model 
    * @param modelName - the name of the model.
@@ -112,6 +117,11 @@ public class FusekiServerHandler {
   public void executeUpdate(final String datasetUrl, final String updateCommand) {
     String pathToUpdateEndpoint = datasetUrl+ENDPOINT_UPDATE;
     UpdateRequest request = UpdateFactory.create(updateCommand);
-    UpdateExecutionFactory.createRemote(request, pathToUpdateEndpoint);
+    UpdateProcessor proc = UpdateExecutionFactory.createRemote(request, pathToUpdateEndpoint);
+    proc.execute(); // perform the update
+  }
+  
+  public void deleteRecord(Model model, String command) {
+    
   }
 }
