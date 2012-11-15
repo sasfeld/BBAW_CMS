@@ -34,7 +34,7 @@ public class Constants {
       configDir = new File(applicationDirectory + "/config");
     configDirectory = configDir.getAbsolutePath();
     if (configDir.exists()) {
-      File coreConstantsPropFile = new File(configDirectory + "/core/constants.properties");
+      File coreConstantsPropFile = new File(configDirectory + "/core/constants.properties"); 
       if (coreConstantsPropFile.exists()) {
         try {
           FileInputStream in = new FileInputStream(coreConstantsPropFile);
@@ -69,6 +69,13 @@ public class Constants {
   public String getLuceneNodesDir() {
     if (properties != null)
       return properties.getProperty("luceneNodesDir");
+    else 
+      return "no properties file";
+  }
+
+  public String getLuceneTaxonomyDir() {
+    if (properties != null)
+      return properties.getProperty("luceneTaxonomyDir");
     else 
       return "no properties file";
   }

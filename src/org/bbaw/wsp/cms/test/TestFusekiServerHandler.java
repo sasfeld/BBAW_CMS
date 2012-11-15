@@ -25,16 +25,17 @@ public class TestFusekiServerHandler {
    public static void main(String[] args) throws ApplicationException, MalformedURLException, IOException {
 //     eraseDataset();
 //     putEdocRdfsToServer();
-     executeQueries();
-//     executeQueriesWithDefaultGraph();
+//     executeQueries();
+     executeQueriesWithDefaultGraph();
    }
 
   private static void executeQueriesWithDefaultGraph() {
     final String url = "http://localhost:3030/ds";
-    String defaultGraph = "http://edoc.bbaw.de/volltexte/2006/2/pdf/2565N0u5kOc.pdf";
+    String defaultGraph = "";
 //    String defaultGraph = "http://edoc.bbaw.de/volltexte/2006/1/pdf/29kstnGPLz2IM.pdf";
     String selectQuery = SparQlStore.SELECT_DEFAULT.getSelectQueryString("*", "", "?s ?p ?o");
     ResultSet results = FusekiClient.getInstance().performSelect(url, selectQuery, defaultGraph );
+//    Model m = results.getResourceModel();
     ResultSetFormatter.out(results);    
   }
 //

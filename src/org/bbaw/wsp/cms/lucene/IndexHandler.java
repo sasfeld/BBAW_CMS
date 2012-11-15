@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.KeywordAnalyzer;
@@ -23,6 +22,10 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldSelector;
 import org.apache.lucene.document.Fieldable;
 import org.apache.lucene.document.SetBasedFieldSelector;
+import org.apache.lucene.facet.taxonomy.TaxonomyReader;
+import org.apache.lucene.facet.taxonomy.TaxonomyWriter;
+import org.apache.lucene.facet.taxonomy.directory.DirectoryTaxonomyReader;
+import org.apache.lucene.facet.taxonomy.directory.DirectoryTaxonomyWriter;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -51,6 +54,7 @@ import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.apache.lucene.search.highlight.TextFragment;
 import org.apache.lucene.search.highlight.TokenSources;
 import org.apache.lucene.search.similar.MoreLikeThis;
+import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 import org.bbaw.wsp.cms.collections.Collection;
@@ -76,7 +80,6 @@ import de.mpg.mpiwg.berlin.mpdl.util.Util;
 
 public class IndexHandler {
   private static IndexHandler instance;
-  private static Logger LOGGER = Logger.getLogger(IndexHandler.class.getName());
   private IndexWriter documentsIndexWriter;
   private IndexWriter nodesIndexWriter;
   private SearcherManager documentsSearcherManager;
@@ -84,7 +87,9 @@ public class IndexHandler {
   private IndexReader documentsIndexReader;
   private PerFieldAnalyzerWrapper documentsPerFieldAnalyzer;
   private PerFieldAnalyzerWrapper nodesPerFieldAnalyzer;
-
+  // private TaxonomyWriter taxonomyWriter;  // TODO facet
+  // private TaxonomyReader taxonomyReader;  // TODO facet
+  
   public static IndexHandler getInstance() throws ApplicationException {
     if (instance == null) {
       instance = new IndexHandler();
@@ -101,6 +106,8 @@ public class IndexHandler {
     documentsSearcherManager = getNewSearcherManager(documentsIndexWriter);
     nodesSearcherManager = getNewSearcherManager(nodesIndexWriter);
     documentsIndexReader = getDocumentsReader();
+    // taxonomyWriter = getTaxonomyWriter();  // TODO facet
+    // taxonomyReader = getTaxonomyReader();  // TODO facet
   }
 
   public void indexDocument(CmsDocOperation docOperation) throws ApplicationException {
@@ -108,10 +115,12 @@ public class IndexHandler {
       // first delete document in documentsIndex and nodesIndex
       deleteDocumentLocal(docOperation);
       indexDocumentLocal(docOperation);
+      // taxonomyWriter.commit();  // TODO facet
       documentsIndexWriter.commit();
       nodesIndexWriter.commit();
     } catch (Exception e) {
       try {
+        // taxonomyWriter.rollback();  // TODO facet
         documentsIndexWriter.rollback();
         nodesIndexWriter.rollback();
       } catch (Exception ex) {
@@ -125,7 +134,7 @@ public class IndexHandler {
     try {
       MetadataRecord mdRecord = docOperation.getMdRecord();
       String docId = mdRecord.getDocId();
-      // add document to documentsIndex
+      // List<CategoryPath> categories = new ArrayList<CategoryPath>(); // TODO facet
       Document doc = new Document();
       Field docIdField = new Field("docId", docId, Field.Store.YES, Field.Index.ANALYZED);
       doc.add(docIdField);
@@ -150,6 +159,7 @@ public class IndexHandler {
         doc.add(collectionNamesField);
       }
       if (mdRecord.getCreator() != null) {
+        // categories.add(new CategoryPath("author", mdRecord.getCreator()));  // TODO facet
         Field authorField = new Field("author", mdRecord.getCreator(), Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS);
         doc.add(authorField);
         String authorStr = mdRecord.getCreator();
@@ -306,6 +316,12 @@ public class IndexHandler {
         }
       }
 
+      // TODO facet
+      // facet creation
+      // CategoryDocumentBuilder categoryDocBuilder = new CategoryDocumentBuilder(taxonomyWriter);
+      // categoryDocBuilder.setCategoryPaths(categories);
+      // categoryDocBuilder.build(doc);
+
       documentsIndexWriter.addDocument(doc);
 
       DocumentHandler docHandler = new DocumentHandler();
@@ -445,6 +461,15 @@ public class IndexHandler {
       SimpleHTMLFormatter htmlFormatter = new SimpleHTMLFormatter();
       QueryScorer queryScorer = new QueryScorer(highlighterQuery);
       Highlighter highlighter = new Highlighter(htmlFormatter, queryScorer);
+
+      // TODO facet
+      // TopScoreDocCollector topDocsCollector = TopScoreDocCollector.create(10, true);
+      // FacetSearchParams facetSearchParams = new FacetSearchParams();
+      // facetSearchParams.addFacetRequest(new CountFacetRequest(new CategoryPath("author"), 10));
+      // FacetsCollector facetsCollector = new FacetsCollector(facetSearchParams, documentsIndexReader, taxonomyReader);
+      // searcher.search(morphQuery, MultiCollector.wrap(topDocsCollector, facetsCollector));
+      // List<FacetResult> facetResult = facetsCollector.getFacetResults();      
+
       TopDocs resultDocs = null;
       if (sortFieldNames != null) {
         Sort sort = buildSort(sortFieldNames, "doc");  // build sort criteria 
@@ -458,7 +483,7 @@ public class IndexHandler {
         toTmp = resultDocs.scoreDocs.length - 1;
       if (resultDocs != null) {
         ArrayList<org.bbaw.wsp.cms.document.Document>  docs = new ArrayList<org.bbaw.wsp.cms.document.Document>();
-        for (int i=from; i<=toTmp; i++) {
+        for (int i=from; i<=toTmp; i++) { 
           int docID = resultDocs.scoreDocs[i].doc;
           FieldSelector docFieldSelector = getDocFieldSelector();
           Document luceneDoc = searcher.doc(docID, docFieldSelector);
@@ -643,7 +668,7 @@ public class IndexHandler {
       }
       String placesStr = null;
       Fieldable placesField = doc.getFieldable("places");
-      if (personsField != null) {
+      if (placesField != null) {
         placesStr = placesField.stringValue();
       }
       String schemaName = null;
@@ -768,6 +793,9 @@ public class IndexHandler {
 
   public void end() throws ApplicationException {
     try {
+      // TODO facet
+      // if (taxonomyWriter != null)
+      //   taxonomyWriter.close();
       if (documentsIndexWriter != null)
         documentsIndexWriter.close();
       if (nodesIndexWriter != null)
@@ -1329,13 +1357,43 @@ public class IndexHandler {
     return reader;
   }
 
+  // TODO facet
+  private TaxonomyWriter getTaxonomyWriter() throws ApplicationException {
+    TaxonomyWriter taxonomyWriter = null;
+    String taxonomyDirStr = Constants.getInstance().getLuceneTaxonomyDir();
+    File taxonomyDirF = new File(taxonomyDirStr);
+    try {
+      Directory taxonomyDir = FSDirectory.open(taxonomyDirF);
+      taxonomyWriter = new DirectoryTaxonomyWriter(taxonomyDir, OpenMode.CREATE_OR_APPEND);
+      taxonomyWriter.commit();
+    } catch (IOException e) {
+      throw new ApplicationException(e);
+    }
+    return taxonomyWriter;
+  }
+  
+  // TODO facet
+  private TaxonomyReader getTaxonomyReader() throws ApplicationException {
+    TaxonomyReader taxonomyReader = null;
+    String taxonomyDirStr = Constants.getInstance().getLuceneTaxonomyDir();
+    File taxonomyDirF = new File(taxonomyDirStr);
+    try {
+      Directory taxonomyDir = FSDirectory.open(taxonomyDirF);
+      taxonomyReader = new DirectoryTaxonomyReader(taxonomyDir);
+    } catch (IOException e) {
+      throw new ApplicationException(e);
+    }
+    return taxonomyReader;
+  }
+
   private void makeIndexReaderUpToDate() throws ApplicationException {
     try {
       boolean isCurrent = documentsIndexReader.isCurrent();
       if (!isCurrent) {
         documentsIndexReader = IndexReader.openIfChanged(documentsIndexReader);
       }
-    } catch (IOException e) {
+      // taxonomyReader.refresh();  // TODO facet
+    } catch (Exception e) {
       throw new ApplicationException(e);
     }
   }
@@ -1346,7 +1404,8 @@ public class IndexHandler {
       if (!isCurrent) {
         documentsSearcherManager.maybeReopen();
       }
-    } catch (IOException e) {
+      // taxonomyReader.refresh();  // TODO facet
+    } catch (Exception e) {
       throw new ApplicationException(e);
     }
   }

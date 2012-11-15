@@ -15,7 +15,7 @@ import com.hp.hpl.jena.tdb.store.DatasetGraphTDB;
 
 public class WspRdfStore {
 
-	final String directory = "/home/juergens/wspTripleStore";
+	final String directory = "C:/Dokumente und Einstellungen/wsp-shk1/Eigene Dateien/Apache Jena/store";
 	private Dataset dataset;
 	private Model defaultModel; 
 	private InfModel rdfsModel;

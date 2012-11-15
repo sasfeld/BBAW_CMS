@@ -28,12 +28,6 @@
       </fileset>
     </copy>
     <jar jarfile="${dist}/wspCmsCore.jar" basedir="${build}"/>
-    <copy file="${dist}/wspCmsCore.jar" todir="../wspCmsWebApp/WebContent/WEB-INF/lib"/>
-    <copy todir="../wspCmsWebApp/WebContent/WEB-INF/config">
-      <fileset dir="${config}">
-        <include name="**/*.*"/>
-      </fileset>
-    </copy>
   </target>
 
   <target name="clean" description="clean" >
